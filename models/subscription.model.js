@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const subSchema = new mongoose.Schema({
     name:{
@@ -48,7 +48,9 @@ const subSchema = new mongoose.Schema({
     renewalDate:{
         type: Date,
         validate: {
-            validator: (value) => value > this.startDate,
+            validator: function(value){
+                return value > this.startDate
+            },
             message: 'Renewal date must be after the start date'
         }
     },
@@ -61,7 +63,7 @@ const subSchema = new mongoose.Schema({
 },{timestamps: true})
 
 // Auto-calculate renewal date if missing
-subSchema.pre('save', (next) => {
+subSchema.pre('save', function(next){
     if(!this.renewalDate){
         const renewalPeriods = {
             daily: 1,
